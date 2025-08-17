@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
+import { TrendingUp, TrendingDown } from 'lucide-react'
 
 
 ChartJS.register(
@@ -18,8 +19,8 @@ function Dashboard({ isSidebarOpen = true }) {
             id: 1,
             title: "Active Jobs",
             value: "43.7k",
-            percentage: "+12.2%",
-            trend: "up",
+            percentage: "-12.2%",
+            trend: "down",
             color: "blue",
             bars: [8, 14, 10, 10, 13, 10, 10]
         },
@@ -72,19 +73,16 @@ function Dashboard({ isSidebarOpen = true }) {
         }
     };
 
-    const getTrendIcon = (trend) => {
+    const getTrendIcon = (trend, id) => {
         if (trend === 'up') {
-            return (
-                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" />
-                </svg>
-            );
+            return <TrendingUp className="w-6 h-6 mr-2 p-1.5 bg-green-100 rounded-full" />;
         } else {
-            return (
-                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" />
-                </svg>
-            );
+            // Special case: first card (Active Jobs) shows decreasing trend in green
+            if (id === 1) {
+                return <TrendingDown className="w-6 h-6 mr-2 p-1.5 bg-green-100 rounded-full" />;
+            } else {
+                return <TrendingDown className="w-6 h-6 mr-2 p-1.5 bg-red-100 rounded-full" />;
+            }
         }
     };
 
@@ -154,8 +152,8 @@ function Dashboard({ isSidebarOpen = true }) {
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="mb-4">
                     <h3 className="text-sm font-medium text-gray-600 mb-2">{data.title}</h3>
-                    <div className={`flex items-center text-sm ${data.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                        {getTrendIcon(data.trend)}
+                    <div className={`flex items-center text-sm ${data.id === 1 ? 'text-green-600' : data.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                        {getTrendIcon(data.trend, data.id)}
                         <span className="font-medium">{data.percentage}</span>
                     </div>
                 </div>
